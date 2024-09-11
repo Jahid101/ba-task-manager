@@ -63,7 +63,6 @@ const LoginForm = () => {
                         title: "Login successful",
                     })
                     router.push('/dashboard')
-                    setIsLoading(false);
                 } else {
                     toast({
                         variant: "error",

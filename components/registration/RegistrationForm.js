@@ -76,7 +76,6 @@ const RegistrationForm = () => {
                         description: "Redirecting to dashboard...",
                     })
                     router.push('/dashboard')
-                    setIsLoading(false);
                 } else {
                     toast({
                         variant: "error",
