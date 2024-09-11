@@ -1,4 +1,4 @@
-import RegistrationForm from "@/components/registration/registrationForm";
+import RegistrationForm from "@/components/registration/RegistrationForm";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
