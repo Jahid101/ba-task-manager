@@ -14,7 +14,7 @@ export default function RegistrationPage() {
       }
     >
       <div
-        className='w-[90%] md:w-[60%] lg:w-[40%] px-5s py-7 flex justify-center items-center border rounded-lg shadow-lg bg-white'
+        className='w-[90%] md:w-[60%] lg:w-[40%] 2xl:w-[30%] px-5s py-7 flex justify-center items-center border rounded-lg shadow-lg bg-white'
         onMouseOver={() => setIsHovering(false)}
         onMouseLeave={() => setIsHovering(true)}
       >
