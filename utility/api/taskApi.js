@@ -2,14 +2,23 @@ import { Constants } from "@/utility/constants";
 import axios from "axios";
 
 export const tasksAPIs = {
-    getAllTask: async () => {
+    getAllTask: async (filters = null) => {
         const data = await axios({
-            url: Constants.Api.tasks.tasks,
-            method: "GET",
+            url: Constants.Api.tasks.tasks
+            // ? `${filters?.date ? '?dueDate=' + filters?.date : ''}${filters?.priority ? '&priority=' + filters?.priority : ''}${filters?.status ? '&status=' + filters?.status : ''}` : '',
+            // method: "GET"
+            ,
+            params: filters ? filters : ''
             // headers: {
             //     authorization: 'Bearer' + ' ' + token,
             // },
-            data: taskInfo
+        })
+        return data?.data;
+    },
+    getTaskById: async (taskId) => {
+        const data = await axios({
+            url: Constants.Api.tasks.tasks + '/' + taskId,
+            method: "GET",
         })
         return data.data;
     },
@@ -32,7 +41,7 @@ export const tasksAPIs = {
     deleteTask: async (taskId) => {
         const data = await axios({
             url: Constants.Api.tasks.tasks + '/' + taskId,
-            method: "PUT",
+            method: "DELETE",
         })
         return data.data;
     },

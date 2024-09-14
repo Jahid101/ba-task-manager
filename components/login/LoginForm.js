@@ -12,14 +12,15 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { useToast } from '@/components/ui/use-toast';
 import { setUserDetails } from '@/redux/user/usersSlice';
 import { usersAPIs } from '@/utility/api/usersApi';
-import { handleErrorMessage } from '@/utility/utilityFunctions';
+import { changeThemeColor, handleErrorMessage } from '@/utility/utilityFunctions';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 const LoginForm = () => {
+    const { userDetails } = useSelector((state) => state.usersSlice);
     const [loading, setIsLoading] = useState(false);
     const router = useRouter();
     const dispatch = useDispatch();
@@ -39,6 +40,12 @@ const LoginForm = () => {
         },
     })
 
+    useEffect(() => {
+        if (userDetails && userDetails?.id) {
+            router.push('/dashboard')
+        }
+    }, []);
+
     const onSubmit = async (data) => {
         setIsLoading(true);
 
@@ -57,13 +64,13 @@ const LoginForm = () => {
                 // console.log('response ==>', response[0]);
 
                 if (user?.id) {
+                    changeThemeColor(user?.preferences?.themeColor);
                     dispatch(setUserDetails(user));
                     toast({
                         variant: "success",
                         title: "Login successful",
                     })
                     router.push('/dashboard')
-                    setIsLoading(false);
                 } else {
                     toast({
                         variant: "error",
@@ -74,6 +81,16 @@ const LoginForm = () => {
             }
         } catch (error) {
             console.log("error ==>", error);
+
+            if (error?.response?.data == "Not found") {
+                toast({
+                    variant: "error",
+                    title: "Invalid login credentials",
+                })
+                setIsLoading(false);
+                return
+            }
+
             toast({
                 variant: "error",
                 title: "Login failed",

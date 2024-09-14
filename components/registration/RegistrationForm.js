@@ -47,17 +47,28 @@ const RegistrationForm = () => {
             name: data.name?.trim(),
             email: data.email?.trim(),
             password: data.password,
+            preferences: {
+                showPriorityFilter: true,
+                showStatusFilter: true,
+                showDateFilter: true,
+                themeColor: '#64748b',
+            },
         };
 
-        // const response = await usersAPIs.loginUser(userCredentials)
-        // if (response?.length > 0) {
-        //     toast({
-        //         variant: "error",
-        //         title: "User already exists",
-        //     })
-        //     setIsLoading(false);
-        //     return;
-        // }
+        try {
+            const response = await usersAPIs.loginUser(userCredentials)
+            if (response?.length > 0) {
+                toast({
+                    variant: "error",
+                    title: "User already exists",
+                })
+                setIsLoading(false);
+                return;
+            }
+        } catch (error) {
+            // console.log("error ==>", error);
+        }
+
 
         try {
             const response = await usersAPIs.createUser(userCredentials)
@@ -69,6 +80,7 @@ const RegistrationForm = () => {
                 // console.log('response ==>', response);
 
                 if (user?.id) {
+                    changeThemeColor(user?.preferences?.themeColor);
                     dispatch(setUserDetails(user));
                     toast({
                         variant: "success",
@@ -76,7 +88,6 @@ const RegistrationForm = () => {
                         description: "Redirecting to dashboard...",
                     })
                     router.push('/dashboard')
-                    setIsLoading(false);
                 } else {
                     toast({
                         variant: "error",

@@ -32,7 +32,7 @@ export const usersAPIs = {
     deleteUser: async (userId) => {
         const data = await axios({
             url: Constants.Api.users.users + '/' + userId,
-            method: "PUT",
+            method: "DELETE",
         })
         return data.data;
     },

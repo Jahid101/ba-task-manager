@@ -18,8 +18,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        "primary": "#0082C8",
-        "secondary": "#E2E8F0",
+        primary: 'var(--color-primary)',
       },
       keyframes: {
         "accordion-down": {
