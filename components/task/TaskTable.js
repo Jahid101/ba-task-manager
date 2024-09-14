@@ -1,6 +1,6 @@
 import React from 'react';
 
-const taskTable = () => {
+const TaskTable = () => {
     return (
         <div>
             
@@ -8,4 +8,4 @@ const taskTable = () => {
     );
 };
 
-export default taskTable;
+export default TaskTable;

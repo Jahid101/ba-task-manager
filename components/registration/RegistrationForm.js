@@ -49,15 +49,20 @@ const RegistrationForm = () => {
             password: data.password,
         };
 
-        // const response = await usersAPIs.loginUser(userCredentials)
-        // if (response?.length > 0) {
-        //     toast({
-        //         variant: "error",
-        //         title: "User already exists",
-        //     })
-        //     setIsLoading(false);
-        //     return;
-        // }
+        try {
+            const response = await usersAPIs.loginUser(userCredentials)
+            if (response?.length > 0) {
+                toast({
+                    variant: "error",
+                    title: "User already exists",
+                })
+                setIsLoading(false);
+                return;
+            }
+        } catch (error) {
+            // console.log("error ==>", error);
+        }
+
 
         try {
             const response = await usersAPIs.createUser(userCredentials)
