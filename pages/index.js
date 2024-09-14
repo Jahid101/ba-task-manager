@@ -1,10 +1,28 @@
+import CustomLoader from "@/components/loader/loader";
 import LoginForm from "@/components/login/LoginForm";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function Home() {
+  const { userDetails } = useSelector((state) => state.usersSlice);
   const router = useRouter();
   const [isHovering, setIsHovering] = useState(false)
+  const [pageLoad, setPageLoad] = useState(true)
+
+  useEffect(() => {
+    if (userDetails && userDetails?.id) {
+      router.push('/dashboard')
+    } else {
+      setPageLoad(false)
+    }
+  }, []);
+
+
+  if (pageLoad) {
+    return (<CustomLoader />)
+  }
+
 
   return (
     <div

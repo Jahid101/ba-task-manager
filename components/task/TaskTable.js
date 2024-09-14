@@ -19,11 +19,12 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { format } from "date-fns";
 import { useRouter } from "next/router";
 import { FiEdit } from "react-icons/fi";
+import { IoCheckmarkDoneCircle, IoCheckmarkDoneCircleOutline } from "react-icons/io5";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { MdOutlineRemoveRedEye } from "react-icons/md";
-import { format } from "date-fns";
+import { useToast } from "../ui/use-toast";
 
 
 const TaskTable = ({
@@ -32,9 +33,10 @@ const TaskTable = ({
     loading,
     setOpenAlert,
     setSelectedData,
+    setMakeComplete
 }) => {
     const router = useRouter();
-
+    const { toast } = useToast();
     const table = useReactTable({
         data,
         columns,
@@ -79,6 +81,7 @@ const TaskTable = ({
                                     <TableRow
                                         key={row.id}
                                         data-state={row.getIsSelected() && "selected"}
+                                        className={row?.original?.status == 'Completed' ? 'bg-green-100 hover:bg-green-300 line-through' : ''}
                                     >
                                         {
                                             row.getVisibleCells().map((cell) => {
@@ -88,7 +91,7 @@ const TaskTable = ({
                                                             className="cursor-pointer"
                                                             onClick={() => { router.push(`/tasks/details/${row?.original?.id}`) }}
                                                         >
-                                                            {row?.original?.createdAt ? new Date(row?.original?.createdAt).toLocaleDateString("en-IN") : 'N/A'}
+                                                            {row?.original?.createdBy?.date ? new Date(row?.original?.createdBy?.date).toLocaleDateString("en-IN") : 'N/A'}
                                                         </TableCell>
                                                     )
                                                 }
@@ -109,20 +112,37 @@ const TaskTable = ({
                                                                 <div className="flex justify-center items-center gap-3">
                                                                     <Tooltip>
                                                                         <TooltipTrigger>
-                                                                            <MdOutlineRemoveRedEye
-                                                                                className="text-purple-900 h-5 w-5"
-                                                                                onClick={() => { router.push(`/tasks/details/${row?.original?.id}`) }}
-                                                                            />
+                                                                            {row?.original?.status == 'Completed' ?
+                                                                                <IoCheckmarkDoneCircle
+                                                                                    className="text-primary h-6 w-6"
+                                                                                    onClick={() => {
+                                                                                        setMakeComplete(false)
+                                                                                        toast({
+                                                                                            variant: "success",
+                                                                                            title: 'Task already completed',
+                                                                                        })
+                                                                                    }}
+                                                                                />
+                                                                                :
+                                                                                <IoCheckmarkDoneCircleOutline
+                                                                                    className="text-primary h-6 w-6"
+                                                                                    onClick={() => {
+                                                                                        setMakeComplete(true)
+                                                                                        setSelectedData(row?.original)
+                                                                                        setOpenAlert(true)
+                                                                                    }}
+                                                                                />
+                                                                            }
                                                                         </TooltipTrigger>
                                                                         <TooltipContent>
-                                                                            <p>View</p>
+                                                                            <p>{row?.original?.status == 'Completed' ? "Completed" : 'Complete'}</p>
                                                                         </TooltipContent>
                                                                     </Tooltip>
 
                                                                     <Tooltip>
                                                                         <TooltipTrigger>
                                                                             <FiEdit
-                                                                                className="text-primary h-5 w-5"
+                                                                                className="text-purple-900 h-5 w-5"
                                                                                 onClick={() => { router.push(`/tasks/edit/${row?.original?.id}`) }}
                                                                             />
                                                                         </TooltipTrigger>
@@ -136,6 +156,7 @@ const TaskTable = ({
                                                                             <RiDeleteBinLine
                                                                                 className="text-red-600 h-5 w-5"
                                                                                 onClick={() => {
+                                                                                    setMakeComplete(false)
                                                                                     setSelectedData(row?.original)
                                                                                     setOpenAlert(true)
                                                                                 }}

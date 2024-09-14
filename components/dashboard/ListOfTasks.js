@@ -14,7 +14,7 @@ const ListOfTasks = ({ date, data }) => {
     },
     {
       header: "Created by",
-      accessorKey: "createdBy",
+      accessorKey: "createdBy.name",
     },
     {
       header: "Created date",

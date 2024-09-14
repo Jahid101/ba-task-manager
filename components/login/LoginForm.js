@@ -14,13 +14,12 @@ import { setUserDetails } from '@/redux/user/usersSlice';
 import { usersAPIs } from '@/utility/api/usersApi';
 import { changeThemeColor, handleErrorMessage } from '@/utility/utilityFunctions';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 
 const LoginForm = () => {
-    const { userDetails } = useSelector((state) => state.usersSlice);
     const [loading, setIsLoading] = useState(false);
     const router = useRouter();
     const dispatch = useDispatch();
@@ -40,11 +39,6 @@ const LoginForm = () => {
         },
     })
 
-    useEffect(() => {
-        if (userDetails && userDetails?.id) {
-            router.push('/dashboard')
-        }
-    }, []);
 
     const onSubmit = async (data) => {
         setIsLoading(true);

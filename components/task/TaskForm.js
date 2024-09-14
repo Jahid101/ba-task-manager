@@ -68,7 +68,10 @@ const TaskForm = ({
 
         const payload = {
             ...data,
-            createdBy: userDetails?.name,
+            createdBy: {
+                name: userDetails?.name,
+                date: new Date(),
+            },
             dueDate: format(new Date(data.dueDate), 'yyyy-MM-dd'),
         }
 
@@ -327,11 +330,11 @@ const TaskForm = ({
                                     className="resize-none"
                                     {...field}
                                     {...register("description", {
-                                        required: "Description is required",
+                                        required: false,
                                     })}
                                 />
                             </FormControl>
-                            <FormMessage>
+                            {/* <FormMessage>
                                 {
                                     handleErrorMessage(errors, "description") ? (
                                         <span className="font-medium text-xs mt-0">
@@ -339,7 +342,7 @@ const TaskForm = ({
                                         </span>
                                     ) : null
                                 }
-                            </FormMessage>
+                            </FormMessage> */}
                         </FormItem>
                     )}
                 />
