@@ -9,7 +9,6 @@ export const tasksAPIs = {
             // headers: {
             //     authorization: 'Bearer' + ' ' + token,
             // },
-            data: taskInfo
         })
         return data.data;
     },
@@ -32,7 +31,7 @@ export const tasksAPIs = {
     deleteTask: async (taskId) => {
         const data = await axios({
             url: Constants.Api.tasks.tasks + '/' + taskId,
-            method: "PUT",
+            method: "DELETE",
         })
         return data.data;
     },

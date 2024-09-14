@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
+import { tasksAPIs } from '@/utility/api/taskApi';
 import { Constants } from '@/utility/constants';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
@@ -39,27 +40,18 @@ import { useDispatch, useSelector } from 'react-redux';
 
 
 const TaskListPage = () => {
-    const { userDetails } = useSelector((state) => state.usersSlice);
     const router = useRouter();
     const [pageLoad, setPageLoad] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [archiveLoading, setArchiveLoading] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const [selectedData, setSelectedData] = useState({});
     const [openAlert, setOpenAlert] = useState(false);
     const [openDatePicker, setOpenDatePicker] = useState(false);
     const [data, setData] = useState([]);
     const [practitionerList, setPractitionerList] = useState([]);
-    const [searchText, setSearchText] = useState('');
-    const dispatch = useDispatch();
     const { toast } = useToast();
-    const [pageMeta, setPageMeta] = useState({});
     const [date, setDate] = useState(new Date())
-    const printRef = useRef();
-    const [printVisible, setPrintVisible] = useState(false);
     const [filters, setFilters] = useState({
-        page: 0,
-        per_page: 10,
-        search: '',
         date: format(new Date(), "yyyy-MM-dd"),
         type: null,
         practitioner: null,
@@ -68,35 +60,27 @@ const TaskListPage = () => {
 
     const columns = [
         {
-            header: "Appointment #",
-            accessorKey: "appointment_no",
+            header: "Title",
+            accessorKey: "title",
             align: 'left'
         },
         {
-            header: "Patient ID",
-            accessorKey: "patient.patient_number",
+            header: "Description",
+            accessorKey: "description",
             align: 'left'
         },
         {
-            header: "Type",
-            accessorKey: "type",
+            header: "Created date",
+            accessorKey: "createdAt",
         },
         {
-            header: "Patient Name",
-            accessorKey: "patient.first_name",
+            header: "Due date",
+            accessorKey: "dueDate",
             align: 'left'
         },
         {
-            header: "DOB",
-            accessorKey: "patient.date_of_birth",
-        },
-        {
-            header: "Practitioner",
-            accessorKey: "user.first_name",
-        },
-        {
-            header: "Serial #",
-            accessorKey: "serial_no",
+            header: "Priority",
+            accessorKey: "priority",
         },
         {
             header: "Status",
@@ -110,56 +94,55 @@ const TaskListPage = () => {
 
 
     useEffect(() => {
-        // getAppointmentList()
+        getTasksList()
     }, [filters]);
 
 
-    const getAppointmentList = () => {
+    const getTasksList = async () => {
         setLoading(true);
-        dispatch(
-            appointmentDispatcher.getAppointmentList(filters, userToken, {
-                success: (response) => {
-                    setData(response?.data)
-                    setPageMeta(response?.meta)
-                    setLoading(false);
-                },
-                error: (error) => {
-                    console.log("error ==>", error);
-                    toast({
-                        variant: "error",
-                        title: 'Something went wrong',
-                    })
-                    setLoading(false);
-                },
+
+        try {
+            const response = await tasksAPIs.getAllTask()
+            if (response) {
+                // console.log('response ==>', response);
+                setData(response?.reverse())
+                setLoading(false);
+            }
+        } catch (error) {
+            console.log("error ==>", error);
+            toast({
+                variant: "error",
+                title: 'Something went wrong',
             })
-        );
+            setLoading(false);
+        }
     }
 
 
-    const handleArchive = () => {
-        setArchiveLoading(true);
-        dispatch(
-            appointmentDispatcher.archiveAppointment(selectedData?.id, userToken, {
-                success: (response) => {
-                    toast({
-                        variant: "success",
-                        title: 'Appointment archived successfully',
-                    })
-                    getAppointmentList();
-                    setArchiveLoading(false);
-                    setOpenAlert(false);
-                },
-                error: (error) => {
-                    console.log("error ==>", error);
-                    toast({
-                        variant: "error",
-                        title: 'Something went wrong',
-                    })
-                    setArchiveLoading(false);
-                },
+    const handleDelete = async () => {
+        setDeleteLoading(true);
+
+        try {
+            const response = await tasksAPIs.deleteTask(selectedData?.id)
+            if (response) {
+                toast({
+                    variant: "success",
+                    title: 'Successfully deleted',
+                })
+                getTasksList()
+                setOpenAlert(false);
+                setDeleteLoading(false);
+            }
+        } catch (error) {
+            console.log("error ==>", error);
+            toast({
+                variant: "error",
+                title: 'Task delete failed',
             })
-        );
+            setDeleteLoading(false);
+        }
     }
+
 
 
     return (
@@ -171,7 +154,7 @@ const TaskListPage = () => {
                 {/* Page content */}
                 {!pageLoad &&
                     <>
-                        <PageTitle title="Appointment" />
+                        <PageTitle title="Tasks" />
 
                         <div className='flex flex-col sm:flex-row items-end sm:justify-between mb-5 gap-3'>
                             <Popover open={openDatePicker} onOpenChange={setOpenDatePicker}>
@@ -297,12 +280,11 @@ const TaskListPage = () => {
                                 </div>
                             </div>
 
-                            <div className='flex justify-end mt-2'>
+                            <div className='flex justify-end mt-2 mb-5'>
                                 <p
                                     className='cursor-pointer underline text-tertiary'
                                     onClick={() => {
                                         setDate(new Date())
-                                        setSearchText('')
                                         setFilters({
                                             page: 0,
                                             per_page: 10,
@@ -318,29 +300,14 @@ const TaskListPage = () => {
                                 </p>
                             </div>
 
-                            <>
-                                <PageTitle title="List of Appointments" className='text-xl mt-5 md:mt-3 mb-3' />
-
-                                {/* Appointment list Table */}
-                                <TaskTable
-                                    columns={columns}
-                                    data={data}
-                                    loading={loading}
-                                    setOpenAlert={setOpenAlert}
-                                    setSelectedData={setSelectedData}
-                                />
-
-                                {/* {data?.length > 0 &&
-                                    <Pagination
-                                        total={pageMeta?.total}
-                                        limit={filters?.per_page}
-                                        setPage={(page) => {
-                                            setFilters({ ...filters, page: page?.selected })
-                                        }}
-                                        selectedPage={filters?.page}
-                                    />
-                                } */}
-                            </>
+                            {/* Tasks list Table */}
+                            <TaskTable
+                                columns={columns}
+                                data={data}
+                                loading={loading}
+                                setOpenAlert={setOpenAlert}
+                                setSelectedData={setSelectedData}
+                            />
 
                             {/* Alert for archive */}
                             <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
@@ -348,18 +315,18 @@ const TaskListPage = () => {
                                     <AlertDialogHeader>
                                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            This will archive the appointment
-                                            and remove the data from the list.
+                                            This will delete the task
+                                            and remove from the list.
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                                         <Button
-                                            onClick={() => handleArchive()}
-                                            loading={archiveLoading}
-                                            disabled={archiveLoading}
+                                            onClick={() => handleDelete()}
+                                            loading={deleteLoading}
+                                            disabled={deleteLoading}
                                         >
-                                            Archive
+                                            Delete
                                         </Button>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>

@@ -216,9 +216,9 @@ const TaskForm = ({
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="low">Low</SelectItem>
-                                            <SelectItem value="medium">Medium</SelectItem>
-                                            <SelectItem value="high">High</SelectItem>
+                                            <SelectItem value="Low">Low</SelectItem>
+                                            <SelectItem value="Medium">Medium</SelectItem>
+                                            <SelectItem value="High">High</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage>
@@ -254,9 +254,9 @@ const TaskForm = ({
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value="pending">Pending</SelectItem>
-                                            <SelectItem value="inProgress">In Progress</SelectItem>
-                                            <SelectItem value="completed">Completed</SelectItem>
+                                            <SelectItem value="Pending">Pending</SelectItem>
+                                            <SelectItem value="In Progress">In Progress</SelectItem>
+                                            <SelectItem value="Completed">Completed</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage>
