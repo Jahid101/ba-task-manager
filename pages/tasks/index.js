@@ -3,7 +3,6 @@ import Container from '@/components/customUI/Container';
 import PageTitle from '@/components/customUI/PageTitle';
 import Layout from '@/components/layout/Layout';
 import CustomLoader from '@/components/loader/loader';
-import CreateTask from '@/components/task/CreateTask';
 import TaskTable from '@/components/task/TaskTable';
 import {
     AlertDialog,
@@ -34,18 +33,19 @@ import { cn } from '@/lib/utils';
 import { Constants } from '@/utility/constants';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 
 const TaskListPage = () => {
     const { userDetails } = useSelector((state) => state.usersSlice);
+    const router = useRouter();
     const [pageLoad, setPageLoad] = useState(false);
     const [loading, setLoading] = useState(false);
     const [archiveLoading, setArchiveLoading] = useState(false);
     const [selectedData, setSelectedData] = useState({});
     const [openAlert, setOpenAlert] = useState(false);
-    const [createModal, setCreateModal] = useState(false);
     const [openDatePicker, setOpenDatePicker] = useState(false);
     const [data, setData] = useState([]);
     const [practitionerList, setPractitionerList] = useState([]);
@@ -161,14 +161,6 @@ const TaskListPage = () => {
         );
     }
 
-    const onCloseModal = (isClose, isApiCall) => {
-        setCreateModal(isClose);
-        if (isApiCall) {
-            getAppointmentList()
-        }
-    }
-
-
 
     return (
         <Layout>
@@ -217,16 +209,10 @@ const TaskListPage = () => {
                             <Button
                                 variants="primary"
                                 className="w-fit"
-                                onClick={() => setCreateModal(true)}
+                                onClick={() => router.push('/tasks/create')}
                             >
                                 Create a Task
                             </Button>
-
-                            {/* {Create Modal */}
-                            <CreateTask
-                                showCreateModal={createModal}
-                                onCloseModal={onCloseModal}
-                            />
                         </div>
 
                         <CardContent className="bg-white gap-0">

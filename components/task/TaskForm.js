@@ -9,6 +9,13 @@ import {
     FormMessage
 } from "@/components/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { CalendarIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from '@/components/ui/use-toast';
@@ -19,11 +26,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
 import { Calendar } from '../ui/calendar';
 import { cn } from '@/lib/utils';
+import { tasksAPIs } from '@/utility/api/taskApi';
+import { useRouter } from 'next/router';
 
 const TaskForm = ({
     btnText = 'Create',
     onCloseModal,
 }) => {
+    const router = useRouter();
+    const { toast } = useToast();
     const [loading, setLoading] = useState(false);
 
 
@@ -44,8 +55,40 @@ const TaskForm = ({
 
 
     const onSubmit = async (data) => {
+        setLoading(true);
 
-        onCloseModal(false);
+        const payload = {
+            ...data,
+            dueDate: format(new Date(data.dueDate), 'yyyy-MM-dd'),
+        }
+
+        // console.log("payload", payload);
+
+        try {
+            const response = await tasksAPIs.createTask(payload)
+
+            if (response) {
+                toast({
+                    variant: "success",
+                    title: "Task created successfully.",
+                })
+                router.push('/tasks')
+            } else {
+                toast({
+                    variant: "error",
+                    title: "Task create failed",
+                })
+                setLoading(false);
+            }
+        } catch (error) {
+            console.log("error ==>", error);
+            toast({
+                variant: "error",
+                title: "Task create failed",
+            })
+            setLoading(false);
+        }
+
     }
 
 
@@ -55,36 +98,181 @@ const TaskForm = ({
                 onSubmit={handleSubmit(onSubmit)}
                 className="space-y-3"
             >
-                <FormField
-                    control={control}
-                    name="title"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Title</FormLabel>
-                            <FormControl>
-                                <Input
-                                    id="title"
-                                    type="text"
-                                    placeholder="Title"
-                                    autoComplete="off"
-                                    {...field}
-                                    {...register("title", {
-                                        required: "Title is required",
-                                    })}
-                                />
-                            </FormControl>
-                            <FormMessage>
-                                {
-                                    handleErrorMessage(errors, "title") ? (
-                                        <span className="font-medium text-xs mt-0">
-                                            {handleErrorMessage(errors, "title")}
-                                        </span>
-                                    ) : null
-                                }
-                            </FormMessage>
-                        </FormItem>
-                    )}
-                />
+                <div className='flex flex-col lg:flex-row gap-5 lg:gap-10'>
+                    <div className="space-y-3 w-full">
+                        <FormField
+                            control={control}
+                            name="title"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Title</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            id="title"
+                                            type="text"
+                                            placeholder="Title"
+                                            autoComplete="off"
+                                            {...field}
+                                            {...register("title", {
+                                                required: "Title is required",
+                                            })}
+                                        />
+                                    </FormControl>
+                                    <FormMessage>
+                                        {
+                                            handleErrorMessage(errors, "title") ? (
+                                                <span className="font-medium text-xs mt-0">
+                                                    {handleErrorMessage(errors, "title")}
+                                                </span>
+                                            ) : null
+                                        }
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={control}
+                            name="dueDate"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Due date:</FormLabel>
+                                    <div>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full pl-3 text-left font-normal justify-start",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
+                                                        {field.value ? (
+                                                            format(field.value, "dd-MM-yyyy")
+                                                        ) : (
+                                                            <span>Pick a date</span>
+                                                        )}
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    required={true}
+                                                    disabled={(date) => {
+                                                        const comparingDate = format(date, "yyyy-MM-dd")
+                                                        const today = format(new Date(), "yyyy-MM-dd")
+
+                                                        if (comparingDate < today) {
+                                                            return true;
+                                                        }
+                                                    }}
+                                                    {...field}
+                                                    {...register("dueDate", {
+                                                        required: "Date is required",
+                                                    })}
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
+
+                                    <FormMessage>
+                                        {
+                                            handleErrorMessage(errors, "dueDate") ? (
+                                                <span className="font-medium text-xs mt-0">
+                                                    {handleErrorMessage(errors, "dueDate")}
+                                                </span>
+                                            ) : null
+                                        }
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+
+                    <div className="space-y-3 w-full">
+                        <FormField
+                            control={control}
+                            name="priority"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>Priority:</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        {...field}
+                                        {...register("priority", {
+                                            required: "Priority is required",
+                                        })}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select priority" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="low">Low</SelectItem>
+                                            <SelectItem value="medium">Medium</SelectItem>
+                                            <SelectItem value="high">High</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage>
+                                        {
+                                            handleErrorMessage(errors, "priority") ? (
+                                                <span className="font-medium text-xs mt-0">
+                                                    {handleErrorMessage(errors, "priority")}
+                                                </span>
+                                            ) : null
+                                        }
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={control}
+                            name="status"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>Status:</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        {...field}
+                                        {...register("status", {
+                                            required: "Status is required",
+                                        })}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select status" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="pending">Pending</SelectItem>
+                                            <SelectItem value="inProgress">In Progress</SelectItem>
+                                            <SelectItem value="completed">Completed</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage>
+                                        {
+                                            handleErrorMessage(errors, "status") ? (
+                                                <span className="font-medium text-xs mt-0">
+                                                    {handleErrorMessage(errors, "status")}
+                                                </span>
+                                            ) : null
+                                        }
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                </div>
 
                 <FormField
                     control={control}
@@ -115,116 +303,6 @@ const TaskForm = ({
                     )}
                 />
 
-
-                <FormField
-                    control={control}
-                    name="dueDate"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                            <FormLabel>Date of birth</FormLabel>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <FormControl>
-                                        <Button
-                                            variant={"outline"}
-                                            className={cn(
-                                                "w-[240px] pl-3 text-left font-normal",
-                                                !field.value && "text-muted-foreground"
-                                            )}
-                                        >
-                                            {field.value ? (
-                                                format(field.value, "PPP")
-                                            ) : (
-                                                <span>Pick a date</span>
-                                            )}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                        </Button>
-                                    </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                    <Calendar
-                                        mode="single"
-                                        selected={field.value}
-                                        onSelect={field.onChange}
-                                        initialFocus
-                                        {...field}
-                                        {...register("dueDate", {
-                                            required: "Date is required",
-                                        })}
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                            <FormMessage>
-                                {
-                                    handleErrorMessage(errors, "dueDate") ? (
-                                        <span className="font-medium text-xs mt-0">
-                                            {handleErrorMessage(errors, "dueDate")}
-                                        </span>
-                                    ) : null
-                                }
-                            </FormMessage>
-                        </FormItem>
-                    )}
-                />
-
-                {/* <FormField
-                    control={control}
-                    name="dueDate"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Due date:</FormLabel>
-                            <div className='flex justify-between items-center mt-3'>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <FormControl>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full sm:w-72 pl-3 text-left font-normal justify-start",
-                                                    !field.valu && "text-muted-foreground"
-                                                )}
-                                            >
-                                                <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
-                                                {field.value ? (
-                                                    format(field.value, "dd-MM-yyyy")
-                                                ) : (
-                                                    <span>Pick a date</span>
-                                                )}
-                                            </Button>
-                                        </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar
-                                            mode="single"
-                                            selected={field.value}
-                                            onSelect={field.onChange}
-                                            required={true}
-                                            // onSelect={(date) => {
-                                            //     setDate(date)
-                                            //     setOpenDatePicker(false)
-                                            //     setFilters({ ...filters, date: format(date, "yyyy-MM-dd") })
-                                            // }}
-                                            {...field}
-                                            {...register("dueDate", {
-                                                required: "Date is required",
-                                            })}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                            </div>
-
-                            <FormMessage>
-                                {
-                                    handleErrorMessage(errors, "dueDate") ? (
-                                        <span className="font-medium text-xs mt-0">
-                                            {handleErrorMessage(errors, "dueDate")}
-                                        </span>
-                                    ) : null
-                                }
-                            </FormMessage>
-                        </FormItem>
-                    )}
-                /> */}
 
                 <div className='text-right'>
                     <Button

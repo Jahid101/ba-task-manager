@@ -42,22 +42,15 @@ export default function SideNavbar() {
       icon: FaRegClipboard,
       variant: "ghost"
     },
-    // {
-    //   title: "Status Board",
-    //   href: "/status-board",
-    //   icon: LuCircuitBoard,
-    //   variant: "ghost"
-    // },
   ]
 
 
   return (
-    <div className='relative min-h-[92vh] border-e'>
+    <div className='relative min-h-[92vh] border-e shadow-lg'>
       <div className={`absolute cursor-pointer z-10 ${mobileWidth ? 'top-[-50px] left-2' : 'right-[-20px] top-0'}`}
         onClick={toggleSidebar}
       >
         <Button
-          // onClick={toggleSidebar}
           variant="secondary"
           className="rounded-full p-2 w-[40px]"
         >
@@ -68,22 +61,12 @@ export default function SideNavbar() {
       <div className={`relative 
       ${isCollapsed ? mobileWidth ? 'hidden' : 'min-w-[80px]'
           : mobileWidth ? 'min-w-[80px]' : 'min-w-[250px]'
-        } px-3 pt-10 transition-all flex flex-col justify-between`}>
-        {/* } px-3 pt-10 transition-all flex flex-col justify-between h-[92vh]`}> */}
-
+        } px-3 pt-10 transition-all flex flex-col justify-between`}
+      >
         <Nav
           isCollapsed={mobileWidth ? true : isCollapsed}
           links={superAdminNav}
         />
-
-        {/* <div
-          className="flex items-center ps-5 py-1 rounded cursor-pointer bg-red-100 text-red-500 mb-5"
-          onClick={() => !loading && handleLogout()}
-        >
-          {loading ? <Spinner size='xs' className='text-red-500' /> : <BiLogOutCircle />}
-          {(!isCollapsed && !mobileWidth) && <span className="ml-2">Log out</span>}
-        </div> */}
-
       </div>
     </div>
   );

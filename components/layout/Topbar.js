@@ -7,16 +7,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { useToast } from '@/components/ui/use-toast';
 import { setUserDetails } from "@/redux/user/usersSlice";
-import { Constants } from "@/utility/constants";
-import { useDebouncedValue } from "@/utility/utilityFunctions";
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { CgProfile } from "react-icons/cg";
 import { FiLogOut } from "react-icons/fi";
+import { IoSettingsOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from 'react-redux';
 import Logo from '../../public/images/logo.jpg';
 
@@ -24,11 +19,6 @@ import Logo from '../../public/images/logo.jpg';
 const TopBar = () => {
     const router = useRouter();
     const dispatch = useDispatch();
-    const [searchText, setSearchText] = useState('');
-    const [searchLoad, setSearchLoad] = useState(false);
-    const [data, setData] = useState(null);
-    const [openList, setOpenList] = useState(false);
-    const { toast } = useToast()
     const { userDetails } = useSelector((state) => state.usersSlice);
 
     const handleLogout = () => {
@@ -39,7 +29,7 @@ const TopBar = () => {
 
 
     return (
-        <div className='flex justify-between w-full items-center mt-1 border-b py-1 shadow'> {/* max-w-[1850px] */}
+        <div className='flex justify-between w-full items-center mt-1 border-b py-1 shadows'> {/* max-w-[1850px] */}
             <div className="w-[250px] ml-7 lg:ml-0">
                 <Image
                     src={Logo}
@@ -56,36 +46,35 @@ const TopBar = () => {
                 <DropdownMenu>
                     <DropdownMenuTrigger>
                         <Avatar className="cursor-pointer border border-solid border-slate-300">
-                            <AvatarImage src={userDetails?.avatar ? Constants.mediaUrl + userDetails?.avatar : null} />
-                            <AvatarFallback className="uppercase">{userDetails?.first_name ? userDetails?.first_name[0] : 'A'}</AvatarFallback>
+                            <AvatarImage src={null} />
+                            <AvatarFallback className="uppercase">{userDetails?.name ? userDetails?.name[0] : 'A'}</AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>
 
-                    <DropdownMenuContent>
+                    <DropdownMenuContent className='mr-5'>
                         <div className="flex items-center py-1">
                             <Avatar className="cursor-pointer border border-solid border-slate-300">
-                                <AvatarImage src={userDetails?.avatar ? Constants.mediaUrl + userDetails?.avatar : null} />
-                                <AvatarFallback className='uppercase'>{userDetails?.first_name ? userDetails?.first_name[0] : 'A'}</AvatarFallback>
+                                <AvatarImage src={null} />
+                                <AvatarFallback className='uppercase'>{userDetails?.name ? userDetails?.name[0] : 'A'}</AvatarFallback>
                             </Avatar>
                             <div>
-                                <DropdownMenuLabel className="pb-0">{userDetails?.name}</DropdownMenuLabel>
-                                <p className="text-xs px-2">{userDetails?.role_name}</p>
+                                <DropdownMenuLabel className="py-0">{userDetails?.name}</DropdownMenuLabel>
                                 <p className="text-xs px-2">{userDetails?.email}</p>
                             </div>
                         </div>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                            onClick={() => router.push('/profile')}
+                            onClick={() => router.push('/settings')}
                             className='cursor-pointer py-3'
                         >
-                            <CgProfile /> &nbsp;&nbsp;&nbsp; My Account
+                            <IoSettingsOutline /> &nbsp;&nbsp; Settings
                         </DropdownMenuItem>
 
                         <DropdownMenuItem
                             onClick={() => handleLogout()}
                             className='cursor-pointer py-3'
                         >
-                            <FiLogOut /> &nbsp;&nbsp;&nbsp; Log Out
+                            <FiLogOut /> &nbsp;&nbsp; Log Out
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

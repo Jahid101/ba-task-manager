@@ -32,7 +32,7 @@ export function Nav({ links, isCollapsed }) {
                     href={link.href}
                     className={cn(
                       buttonVariants({
-                        variant: link.href === pathName ? "default" : "ghost",
+                        variant: (link.href === pathName || pathName.includes(link.href)) ? "default" : "ghost",
                         size: "icon"
                       }),
                       "h-9 w-9",
@@ -63,7 +63,7 @@ export function Nav({ links, isCollapsed }) {
                 href={link.href}
                 className={cn(
                   buttonVariants({
-                    variant: link.href === pathName ? "default" : "ghost",
+                    variant: (link.href === pathName || pathName.includes(link.href)) ? "default" : "ghost",
                     size: "sm"
                   }),
                   link.variant === "default" &&
