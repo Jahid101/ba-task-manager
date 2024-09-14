@@ -4,7 +4,7 @@ import CardContent from "@/components/customUI/CardContent";
 const MiniCard = ({ cardData }) => {
   function Card(props) {
     return (
-      <CardContent className="p-3">
+      <CardContent className="bg-white shadow-lg p-3">
         <section className="flex justify-between gap-2">
           {/* label */}
           <p className="text-primary">{props.label}</p>
@@ -21,7 +21,7 @@ const MiniCard = ({ cardData }) => {
 
   return (
     <div className="grid w-full grid-cols-1 gap-4 gap-x-4 transition-all sm:grid-cols-2 xl:grid-cols-3 h-fit">
-      {cardData.map((d, i) => (
+      {cardData?.map((d, i) => (
         <Card key={d.id} amount={d.amount} description={d.description} icon={d.icon} label={d.label} />
       ))}
     </div>

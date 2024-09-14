@@ -13,7 +13,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -31,12 +30,10 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { tasksAPIs } from '@/utility/api/taskApi';
-import { Constants } from '@/utility/constants';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 
 
 const TaskListPage = () => {
@@ -48,7 +45,6 @@ const TaskListPage = () => {
     const [openAlert, setOpenAlert] = useState(false);
     const [openDatePicker, setOpenDatePicker] = useState(false);
     const [data, setData] = useState([]);
-    const [practitionerList, setPractitionerList] = useState([]);
     const { toast } = useToast();
     const [date, setDate] = useState(null)
     const [filters, setFilters] = useState({
@@ -151,7 +147,7 @@ const TaskListPage = () => {
     return (
         <Layout>
             <Container>
-                {/* Loader and authorization check */}
+                {/* Loader */}
                 {pageLoad && <CustomLoader />}
 
                 {/* Page content */}
@@ -277,7 +273,7 @@ const TaskListPage = () => {
                                 setSelectedData={setSelectedData}
                             />
 
-                            {/* Alert for archive */}
+                            {/* Alert for Delete */}
                             <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
