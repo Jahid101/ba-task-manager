@@ -23,6 +23,7 @@ import { useRouter } from "next/router";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
+import { format } from "date-fns";
 
 
 const TaskTable = ({
@@ -81,13 +82,23 @@ const TaskTable = ({
                                     >
                                         {
                                             row.getVisibleCells().map((cell) => {
-                                                if (cell?.column.columnDef.header == 'createdAt') {
+                                                if (cell?.column.columnDef.header == 'Created date') {
                                                     return (
                                                         <TableCell TableCell key={cell.id} align={cell?.column.columnDef.align}
                                                             className="cursor-pointer"
                                                             onClick={() => { router.push(`/tasks/details/${row?.original?.id}`) }}
                                                         >
                                                             {row?.original?.createdAt ? new Date(row?.original?.createdAt).toLocaleDateString("en-IN") : 'N/A'}
+                                                        </TableCell>
+                                                    )
+                                                }
+                                                else if (cell?.column.columnDef.header == 'Due date') {
+                                                    return (
+                                                        <TableCell TableCell key={cell.id} align={cell?.column.columnDef.align}
+                                                            className="cursor-pointer"
+                                                            onClick={() => { router.push(`/tasks/details/${row?.original?.id}`) }}
+                                                        >
+                                                            {row?.original?.dueDate ? format(new Date(row?.original?.dueDate), "dd/MM/yyyy") : 'N/A'}
                                                         </TableCell>
                                                     )
                                                 }

@@ -31,10 +31,7 @@ const TaskDetailsPage = () => {
             const response = await tasksAPIs.getTaskById(id)
             if (response) {
                 // console.log('response', response);
-                let taskInfo = { ...response }
-                delete taskInfo.createdAt
-
-                setData(taskInfo);
+                setData(response);
                 setPageLoad(false);
             }
         } catch (error) {
@@ -79,23 +76,63 @@ const TaskDetailsPage = () => {
                                 </Button>
                             </div>
 
-                            <PageTitle title={data?.title} className="text-black mt-0 mb-0 font-semibold" />
+                            <PageTitle title={data?.title} className="text-black mt-0 mb-0 font-bold" />
 
                             <div className='flex flex-col sm:flex-row w-full gap-3 sm:gap-12 mb-3'>
                                 <div className='w-full sm:w-[50%]'>
-                                    <p className='break-all text-lg'>Id: {data?.id || "-"}</p>
-                                    <p className='break-all text-lg'>Created by: {data?.createdBy || "-"}</p>
-                                    <p className='break-all text-lg'>Created date: {new Date(data?.createdAt).toLocaleDateString("en-IN") || "-"}</p>
-                                    <p className='break-all text-lg'>Created time: {new Date(data?.createdAt).toLocaleDateString("en-IN") || "-"}</p>
-                                    <p className='break-all text-lg'>Description: {data?.description || "-"}</p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Id:</span>
+                                        &nbsp;
+                                        <span>{data?.id || "-"}</span>
+                                    </p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Created by:</span>
+                                        &nbsp;
+                                        <span>{data?.createdBy || "-"}</span>
+                                    </p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Created date:</span>
+                                        &nbsp;
+                                        <span>{new Date(data?.createdAt).toLocaleDateString("en-IN") || "-"}</span>
+                                    </p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Created time:</span>
+                                        &nbsp;
+                                        <span>{new Date(data?.createdAt).toLocaleTimeString() || "-"}</span>
+                                    </p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Description:</span>
+                                        &nbsp;
+                                        <span>{data?.description || "-"}</span>
+                                    </p>
                                 </div>
 
                                 <div className='w-full sm:w-[50%] gap-2'>
-                                    <p className='break-all text-lg'>Priority: {data?.priority || "-"}</p>
-                                    <p className='break-all text-lg'>Status: {data?.status || "-"}</p>
-                                    <p className='break-all text-lg'>Updated by: {data?.updatedBy?.name || "-"}</p>
-                                    <p className='break-all text-lg'>Updated date: {new Date(data?.createdAt).toLocaleDateString("en-IN") || "-"}</p>
-                                    <p className='break-all text-lg'>Updated time: {new Date(data?.createdAt).toLocaleDateString("en-IN") || "-"}</p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Priority:</span>
+                                        &nbsp;
+                                        <span>{data?.priority || "-"}</span>
+                                    </p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Status:</span>
+                                        &nbsp;
+                                        <span>{data?.status || "-"}</span>
+                                    </p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Updated by:</span>
+                                        &nbsp;
+                                        <span>{data?.updatedBy?.name || "-"}</span>
+                                    </p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Updated date:</span>
+                                        &nbsp;
+                                        <span>{new Date(data?.updatedBy?.date).toLocaleDateString("en-IN") || "-"}</span>
+                                    </p>
+                                    <p className='break-all'>
+                                        <span className='font-semibold'>Updated time:</span>
+                                        &nbsp;
+                                        <span>{new Date(data?.updatedBy?.date).toLocaleTimeString() || "-"}</span>
+                                    </p>
                                 </div>
                             </div>
                         </>
