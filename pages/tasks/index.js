@@ -44,6 +44,7 @@ const TaskListPage = () => {
     const [selectedData, setSelectedData] = useState({});
     const [openAlert, setOpenAlert] = useState(false);
     const [openDatePicker, setOpenDatePicker] = useState(false);
+    const [makeComplete, setMakeComplete] = useState(false);
     const [data, setData] = useState([]);
     const { toast } = useToast();
     const [date, setDate] = useState(null)
@@ -61,7 +62,7 @@ const TaskListPage = () => {
         },
         {
             header: "Created by",
-            accessorKey: "createdBy",
+            accessorKey: "createdBy.name",
         },
         {
             header: "Created date",
@@ -118,28 +119,56 @@ const TaskListPage = () => {
     }
 
 
-    const handleDelete = async () => {
+    const handleTaskAction = async () => {
         setDeleteLoading(true);
+        const updatedBy = {
+            name: userDetails?.name,
+            date: new Date(),
+        }
 
-        try {
-            const response = await tasksAPIs.deleteTask(selectedData?.id)
-            if (response) {
+        if (makeComplete) {
+            try {
+                const response = await tasksAPIs.updateTask({ status: 'Completed', updatedBy: updatedBy }, selectedData?.id)
+                if (response) {
+                    toast({
+                        variant: "success",
+                        title: 'Task completed successfully',
+                    })
+                    getTasksList()
+                    setMakeComplete(false);
+                    setOpenAlert(false);
+                    setDeleteLoading(false);
+                }
+            } catch (error) {
+                console.log("error ==>", error);
                 toast({
-                    variant: "success",
-                    title: 'Successfully deleted',
+                    variant: "error",
+                    title: 'Task completion failed',
                 })
-                getTasksList()
-                setOpenAlert(false);
                 setDeleteLoading(false);
             }
-        } catch (error) {
-            console.log("error ==>", error);
-            toast({
-                variant: "error",
-                title: 'Task delete failed',
-            })
-            setDeleteLoading(false);
+        } else {
+            try {
+                const response = await tasksAPIs.deleteTask(selectedData?.id)
+                if (response) {
+                    toast({
+                        variant: "success",
+                        title: 'Successfully deleted',
+                    })
+                    getTasksList()
+                    setOpenAlert(false);
+                    setDeleteLoading(false);
+                }
+            } catch (error) {
+                console.log("error ==>", error);
+                toast({
+                    variant: "error",
+                    title: 'Task delete failed',
+                })
+                setDeleteLoading(false);
+            }
         }
+
     }
 
 
@@ -272,26 +301,32 @@ const TaskListPage = () => {
                         loading={loading}
                         setOpenAlert={setOpenAlert}
                         setSelectedData={setSelectedData}
+                        setMakeComplete={setMakeComplete}
                     />
 
-                    {/* Alert for Delete */}
+                    {/* Alert for Complete and Delete */}
                     <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
                         <AlertDialogContent>
                             <AlertDialogHeader>
                                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    This will delete the task
-                                    and remove from the list.
+                                    {makeComplete ?
+                                        'This will change the status of the task to Complete'
+                                        :
+                                        'This will Delete the task and remove from the list.'
+                                    }
+
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <Button
-                                    onClick={() => handleDelete()}
+                                    variant={makeComplete ? '' : 'destructive'}
+                                    onClick={() => handleTaskAction()}
                                     loading={deleteLoading}
                                     disabled={deleteLoading}
                                 >
-                                    Delete
+                                    {makeComplete ? 'Complete' : 'Delete'}
                                 </Button>
                             </AlertDialogFooter>
                         </AlertDialogContent>

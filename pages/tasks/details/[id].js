@@ -87,17 +87,17 @@ const TaskDetailsPage = () => {
                                     <p className='break-all'>
                                         <span className='font-semibold'>Created by:</span>
                                         &nbsp;
-                                        <span>{data?.createdBy || "-"}</span>
+                                        <span>{data?.createdBy?.name || "-"}</span>
                                     </p>
                                     <p className='break-all'>
                                         <span className='font-semibold'>Created date:</span>
                                         &nbsp;
-                                        <span>{new Date(data?.createdAt).toLocaleDateString("en-IN") || "-"}</span>
+                                        <span>{new Date(data?.createdBy?.date).toLocaleDateString("en-IN") || "-"}</span>
                                     </p>
                                     <p className='break-all'>
                                         <span className='font-semibold'>Created time:</span>
                                         &nbsp;
-                                        <span>{new Date(data?.createdAt).toLocaleTimeString() || "-"}</span>
+                                        <span>{new Date(data?.createdBy?.date).toLocaleTimeString() || "-"}</span>
                                     </p>
                                     <p className='break-all'>
                                         <span className='font-semibold'>Description:</span>
@@ -125,12 +125,18 @@ const TaskDetailsPage = () => {
                                     <p className='break-all'>
                                         <span className='font-semibold'>Updated date:</span>
                                         &nbsp;
-                                        <span>{new Date(data?.updatedBy?.date).toLocaleDateString("en-IN") || "-"}</span>
+                                        <span>{data?.updatedBy?.date ?
+                                            new Date(data?.updatedBy?.date).toLocaleDateString("en-IN") || "-"
+                                            : '-'
+                                        }</span>
                                     </p>
                                     <p className='break-all'>
                                         <span className='font-semibold'>Updated time:</span>
                                         &nbsp;
-                                        <span>{new Date(data?.updatedBy?.date).toLocaleTimeString() || "-"}</span>
+                                        <span>{data?.updatedBy?.date ?
+                                            new Date(data?.updatedBy?.date).toLocaleTimeString() || "-"
+                                            : '-'
+                                        }</span>
                                     </p>
                                 </div>
                             </div>
