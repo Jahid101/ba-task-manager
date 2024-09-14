@@ -41,6 +41,7 @@ const SettingPage = () => {
                     title: 'Successfully deleted',
                 })
                 dispatch(setUserDetails(null));
+                changeThemeColor();
                 router.push('/')
                 setDeleteLoading(false);
             }

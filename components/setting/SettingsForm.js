@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { setUserDetails } from '@/redux/user/usersSlice';
 import { usersAPIs } from '@/utility/api/usersApi';
+import { changeThemeColor } from '@/utility/utilityFunctions';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -36,7 +37,6 @@ const SettingsForm = () => {
             showPriorityFilter: true,
             showStatusFilter: true,
             showDateFilter: true,
-
             themeColor: '',
         },
     })
@@ -64,6 +64,7 @@ const SettingsForm = () => {
             const response = await usersAPIs.updateUser(payload, userDetails?.id)
 
             if (response) {
+                changeThemeColor(data?.themeColor);
                 dispatch(setUserDetails(response));
                 toast({
                     variant: "success",

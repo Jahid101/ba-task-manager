@@ -14,6 +14,7 @@ import { FiLogOut } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from 'react-redux';
 import Logo from '../../public/images/logo.jpg';
+import { changeThemeColor } from "@/utility/utilityFunctions";
 
 
 const TopBar = () => {
@@ -23,6 +24,7 @@ const TopBar = () => {
 
     const handleLogout = () => {
         dispatch(setUserDetails(null));
+        changeThemeColor();
         router.push("/");
     };
 

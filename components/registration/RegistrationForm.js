@@ -80,6 +80,7 @@ const RegistrationForm = () => {
                 // console.log('response ==>', response);
 
                 if (user?.id) {
+                    changeThemeColor(user?.preferences?.themeColor);
                     dispatch(setUserDetails(user));
                     toast({
                         variant: "success",
