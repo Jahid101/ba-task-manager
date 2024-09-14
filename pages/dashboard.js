@@ -117,7 +117,7 @@ const Dashboard = () => {
             <Container>
                 <PageTitle title="Dashboard" className="font-normal" />
 
-                <div className='flex flex-col sm:flex-row items-end sm:justify-between mb-5 gap-3'>
+                <div className='flex flex-col-reverse sm:flex-row sm:items-end sm:justify-between mb-5 gap-3'>
                     <div>
                         <p className='mb-1'>Filter by due date</p>
 
@@ -156,14 +156,15 @@ const Dashboard = () => {
                         </Popover>
                     </div>
 
-
-                    <Button
-                        variants="primary"
-                        className="w-fit"
-                        onClick={() => router.push('/tasks/create')}
-                    >
-                        Create task
-                    </Button>
+                    <div className="text-right">
+                        <Button
+                            variants="primary"
+                            className="w-fit"
+                            onClick={() => router.push('/tasks/create')}
+                        >
+                            Create task
+                        </Button>
+                    </div>
                 </div>
 
 
