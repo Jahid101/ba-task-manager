@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Form,
@@ -28,11 +28,14 @@ import { Calendar } from '../ui/calendar';
 import { cn } from '@/lib/utils';
 import { tasksAPIs } from '@/utility/api/taskApi';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
 
 const TaskForm = ({
     btnText = 'Create',
-    onCloseModal,
+    isEdit = false,
+    data = null,
 }) => {
+    const { userDetails } = useSelector((state) => state.usersSlice);
     const router = useRouter();
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
@@ -42,6 +45,7 @@ const TaskForm = ({
         register,
         formState: { errors, isSubmitting, isValid },
         handleSubmit,
+        reset,
         control,
     } = useForm({ mode: "all" });
 
@@ -53,42 +57,79 @@ const TaskForm = ({
         },
     })
 
+    useEffect(() => {
+        if (isEdit) {
+            reset(data)
+        }
+    }, []);
 
     const onSubmit = async (data) => {
         setLoading(true);
 
         const payload = {
             ...data,
+            createdBy: userDetails?.name,
             dueDate: format(new Date(data.dueDate), 'yyyy-MM-dd'),
         }
 
         // console.log("payload", payload);
 
-        try {
-            const response = await tasksAPIs.createTask(payload)
+        if (isEdit) {
+            delete payload?.id;
+            payload.updatedBy = {
+                name: userDetails?.name,
+                date: new Date(),
+            }
 
-            if (response) {
+            try {
+                const response = await tasksAPIs.updateTask(payload, data?.id)
+
+                if (response) {
+                    toast({
+                        variant: "success",
+                        title: "Task updated successfully.",
+                    })
+                } else {
+                    toast({
+                        variant: "error",
+                        title: "Task update failed",
+                    })
+                }
+                setLoading(false);
+            } catch (error) {
+                console.log("error ==>", error);
                 toast({
-                    variant: "success",
-                    title: "Task created successfully.",
+                    variant: "error",
+                    title: "Task update failed",
                 })
-                router.push('/tasks')
-            } else {
+                setLoading(false);
+            }
+        } else {
+            try {
+                const response = await tasksAPIs.createTask(payload)
+
+                if (response) {
+                    toast({
+                        variant: "success",
+                        title: "Task created successfully.",
+                    })
+                    router.push('/tasks')
+                } else {
+                    toast({
+                        variant: "error",
+                        title: "Task create failed",
+                    })
+                    setLoading(false);
+                }
+            } catch (error) {
+                console.log("error ==>", error);
                 toast({
                     variant: "error",
                     title: "Task create failed",
                 })
                 setLoading(false);
             }
-        } catch (error) {
-            console.log("error ==>", error);
-            toast({
-                variant: "error",
-                title: "Task create failed",
-            })
-            setLoading(false);
         }
-
     }
 
 

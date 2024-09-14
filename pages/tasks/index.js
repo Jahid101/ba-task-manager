@@ -65,9 +65,8 @@ const TaskListPage = () => {
             align: 'left'
         },
         {
-            header: "Description",
-            accessorKey: "description",
-            align: 'left'
+            header: "Created by",
+            accessorKey: "createdBy",
         },
         {
             header: "Created date",
@@ -76,7 +75,6 @@ const TaskListPage = () => {
         {
             header: "Due date",
             accessorKey: "dueDate",
-            align: 'left'
         },
         {
             header: "Priority",

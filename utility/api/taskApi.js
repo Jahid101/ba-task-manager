@@ -12,6 +12,13 @@ export const tasksAPIs = {
         })
         return data.data;
     },
+    getTaskById: async (taskId) => {
+        const data = await axios({
+            url: Constants.Api.tasks.tasks + '/' + taskId,
+            method: "GET",
+        })
+        return data.data;
+    },
     createTask: async (taskInfo) => {
         const data = await axios({
             url: Constants.Api.tasks.tasks,

@@ -1,15 +1,24 @@
 import CardContent from '@/components/customUI/CardContent';
 import Container from '@/components/customUI/Container';
-import PageTitle from '@/components/customUI/PageTitle';
 import Layout from '@/components/layout/Layout';
 import TaskForm from '@/components/task/TaskForm';
+import Breadcrumb from '@/components/ui/breadcrumb';
 
 const TasksCreatePage = () => {
 
     return (
         <Layout>
             <Container>
-                <PageTitle title="Create Task" className=" font-normal" />
+                <Breadcrumb
+                    backLink={'/tasks'}
+                    items={
+                        [
+                            {
+                                title: "Create Task",
+                            }
+                        ]
+                    }
+                />
                 <CardContent className="bg-white mb-7 shadow-lg">
                     <TaskForm />
                 </CardContent>

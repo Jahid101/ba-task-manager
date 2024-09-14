@@ -112,7 +112,7 @@ const TaskTable = ({
                                                                         <TooltipTrigger>
                                                                             <FiEdit
                                                                                 className="text-primary h-5 w-5"
-                                                                                onClick={() => { router.push(`/tasks/details/${row?.original?.id}`) }}
+                                                                                onClick={() => { router.push(`/tasks/edit/${row?.original?.id}`) }}
                                                                             />
                                                                         </TooltipTrigger>
                                                                         <TooltipContent>
