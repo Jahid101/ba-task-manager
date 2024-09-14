@@ -47,7 +47,7 @@ export default function SideNavbar() {
 
   return (
     <div className='relative min-h-[92vh] border-e shadow-lg'>
-      <div className={`absolute cursor-pointer z-10 ${mobileWidth ? 'top-[-50px] left-2' : 'right-[-20px] top-0'}`}
+      <div className={`absolute cursor-pointer z-10 ${mobileWidth ? 'top-[-20px] left-4' : 'right-[-20px] top-0'}`}
         onClick={toggleSidebar}
       >
         <Button

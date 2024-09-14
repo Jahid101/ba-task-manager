@@ -4,7 +4,6 @@ import PageTitle from "@/components/customUI/PageTitle";
 import ListOfTasks from "@/components/dashboard/ListOfTasks";
 import MiniCard from "@/components/dashboard/MiniCard";
 import Layout from "@/components/layout/Layout";
-import CustomLoader from "@/components/loader/loader";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -114,87 +113,76 @@ const Dashboard = () => {
 
 
     return (
-        <>
-            <Layout>
-                <Container>
-                    {pageLoad && <CustomLoader />}
+        <Layout>
+            <Container>
+                <PageTitle title="Dashboard" className="font-normal" />
 
-                    {/* Page content */}
-                    {!pageLoad &&
-                        <>
-                            <PageTitle title="Dashboard" className="font-normal" />
+                <div className='flex flex-col sm:flex-row items-end sm:justify-between mb-5 gap-3'>
+                    <div>
+                        <p className='mb-1'>Filter by due date</p>
 
-                            <div className='flex flex-col sm:flex-row items-end sm:justify-between mb-5 gap-3'>
-                                <div>
-                                    <p className='mb-1'>Filter by due date</p>
-
-                                    <Popover open={openDatePicker} onOpenChange={setOpenDatePicker}>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant={"outline"}
-                                                // disabled={!permissions?.dashboardView}
-                                                className={cn(
-                                                    "w-full sm:w-72 pl-3 text-left font-normal justify-start",
-                                                    !date && "text-muted-foreground"
-                                                )}
-                                            >
-                                                <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
-                                                {date ? (
-                                                    format(date, "dd-MM-yyyy")
-                                                ) : (
-                                                    <span>Pick a date</span>
-                                                )}
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                initialFocus
-                                                selected={date}
-                                                required={true}
-                                                // disabled={!permissions?.dashboardView}
-                                                onSelect={(date) => {
-                                                    setDate(date)
-                                                    setOpenDatePicker(false)
-                                                    setFilters({ ...filters, dueDate: format(date, "yyyy-MM-dd") })
-                                                }}
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
-
-
+                        <Popover open={openDatePicker} onOpenChange={setOpenDatePicker}>
+                            <PopoverTrigger asChild>
                                 <Button
-                                    variants="primary"
-                                    className="w-fit"
-                                    onClick={() => router.push('/tasks/create')}
+                                    variant={"outline"}
+                                    // disabled={!permissions?.dashboardView}
+                                    className={cn(
+                                        "w-full sm:w-72 pl-3 text-left font-normal justify-start",
+                                        !date && "text-muted-foreground"
+                                    )}
                                 >
-                                    Create task
+                                    <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
+                                    {date ? (
+                                        format(date, "dd-MM-yyyy")
+                                    ) : (
+                                        <span>Pick a date</span>
+                                    )}
                                 </Button>
-                            </div>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                    mode="single"
+                                    initialFocus
+                                    selected={date}
+                                    required={true}
+                                    // disabled={!permissions?.dashboardView}
+                                    onSelect={(date) => {
+                                        setDate(date)
+                                        setOpenDatePicker(false)
+                                        setFilters({ ...filters, dueDate: format(date, "yyyy-MM-dd") })
+                                    }}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
 
 
-                            <CardContent className="gap-5 mb-10 p-3 md:p-5">
-                                {/* loader for MiniCard */}
-                                {loading &&
-                                    <div className='min-h-48 flex justify-center items-center'>
-                                        <Spinner size='lg' />
-                                    </div>
-                                }
-                                {/* Dashboard statistics */}
-                                {!loading && <MiniCard cardData={cardDataInfo} />}
-
-                                {/* Dashboard tasks list */}
-                                {!loading && <ListOfTasks date={date} data={data} />}
-
-                            </CardContent>
+                    <Button
+                        variants="primary"
+                        className="w-fit"
+                        onClick={() => router.push('/tasks/create')}
+                    >
+                        Create task
+                    </Button>
+                </div>
 
 
-                        </>
+                <CardContent className="gap-5 mb-10 p-3 md:p-5">
+                    {/* loader for MiniCard */}
+                    {loading &&
+                        <div className='min-h-48 flex justify-center items-center'>
+                            <Spinner size='lg' />
+                        </div>
                     }
-                </Container>
-            </Layout>
-        </>
+                    {/* Dashboard statistics */}
+                    {!loading && <MiniCard cardData={cardDataInfo} />}
+
+                    {/* Dashboard tasks list */}
+                    {!loading && <ListOfTasks date={date} data={data} />}
+
+                </CardContent>
+            </Container>
+        </Layout>
     );
 };
 

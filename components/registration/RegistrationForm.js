@@ -47,6 +47,12 @@ const RegistrationForm = () => {
             name: data.name?.trim(),
             email: data.email?.trim(),
             password: data.password,
+            preferences: {
+                showPriorityFilter: true,
+                showStatusFilter: true,
+                showDateFilter: true,
+                themeColor: '#64748b',
+            },
         };
 
         try {

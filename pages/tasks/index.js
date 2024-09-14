@@ -2,7 +2,6 @@ import CardContent from '@/components/customUI/CardContent';
 import Container from '@/components/customUI/Container';
 import PageTitle from '@/components/customUI/PageTitle';
 import Layout from '@/components/layout/Layout';
-import CustomLoader from '@/components/loader/loader';
 import TaskTable from '@/components/task/TaskTable';
 import {
     AlertDialog,
@@ -38,7 +37,6 @@ import { useEffect, useState } from 'react';
 
 const TaskListPage = () => {
     const router = useRouter();
-    const [pageLoad, setPageLoad] = useState(false);
     const [loading, setLoading] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [selectedData, setSelectedData] = useState({});
@@ -147,157 +145,148 @@ const TaskListPage = () => {
     return (
         <Layout>
             <Container>
-                {/* Loader */}
-                {pageLoad && <CustomLoader />}
+                <PageTitle title="Tasks" />
 
-                {/* Page content */}
-                {!pageLoad &&
-                    <>
-                        <PageTitle title="Tasks" />
+                <div className='flex items-end justify-end mb-5 gap-3'>
+                    <Button
+                        variants="primary"
+                        className="w-fit"
+                        onClick={() => router.push('/tasks/create')}
+                    >
+                        Create a Task
+                    </Button>
+                </div>
 
-                        <div className='flex items-end justify-end mb-5 gap-3'>
+                <CardContent className="bg-white gap-0 mb-7">
+                    {/* Filters */}
+                    <div className='flex items-end gap-5 flex-wrap'>
+                        <div className="w-full sm:w-72">
+                            <p className='text-md text-primary mb-1'>Filter by date</p>
 
-                            <Button
-                                variants="primary"
-                                className="w-fit"
-                                onClick={() => router.push('/tasks/create')}
-                            >
-                                Create a Task
-                            </Button>
+                            <Popover open={openDatePicker} onOpenChange={setOpenDatePicker}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full sm:w-72 pl-3 text-left font-normal justify-start",
+                                            !date && "text-muted-foreground"
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
+                                        {date ? (
+                                            format(date, "dd-MM-yyyy")
+                                        ) : (
+                                            <span>Pick a date</span>
+                                        )}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                        mode="single"
+                                        initialFocus
+                                        selected={date}
+                                        required={true}
+                                        onSelect={(date) => {
+                                            setDate(date)
+                                            setOpenDatePicker(false)
+                                            setFilters({ ...filters, dueDate: format(date, "yyyy-MM-dd") })
+                                        }}
+                                    />
+                                </PopoverContent>
+                            </Popover>
                         </div>
 
-                        <CardContent className="bg-white gap-0 mb-7">
-                            {/* Filters */}
-                            <div className='flex items-end gap-5 flex-wrap'>
-                                <div className="w-full sm:w-72">
-                                    <p className='text-md text-primary mb-1'>Filter by date</p>
+                        <div className="w-full sm:w-72">
+                            <p className='text-md text-primary mb-1'>Filter by priority</p>
 
-                                    <Popover open={openDatePicker} onOpenChange={setOpenDatePicker}>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full sm:w-72 pl-3 text-left font-normal justify-start",
-                                                    !date && "text-muted-foreground"
-                                                )}
-                                            >
-                                                <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
-                                                {date ? (
-                                                    format(date, "dd-MM-yyyy")
-                                                ) : (
-                                                    <span>Pick a date</span>
-                                                )}
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                initialFocus
-                                                selected={date}
-                                                required={true}
-                                                onSelect={(date) => {
-                                                    setDate(date)
-                                                    setOpenDatePicker(false)
-                                                    setFilters({ ...filters, dueDate: format(date, "yyyy-MM-dd") })
-                                                }}
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
+                            <Select
+                                value={filters.priority}
+                                onValueChange={(value) => {
+                                    setFilters({ ...filters, priority: value })
+                                }}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select priority" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={null}>None</SelectItem>
+                                    <SelectItem value="Low">Low</SelectItem>
+                                    <SelectItem value="Medium">Medium</SelectItem>
+                                    <SelectItem value="High">High</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                                <div className="w-full sm:w-72">
-                                    <p className='text-md text-primary mb-1'>Filter by priority</p>
+                        <div className="w-full sm:w-72">
+                            <p className='text-md text-primary mb-1'>Filter by status</p>
 
-                                    <Select
-                                        value={filters.priority}
-                                        onValueChange={(value) => {
-                                            setFilters({ ...filters, priority: value })
-                                        }}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select priority" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value={null}>None</SelectItem>
-                                            <SelectItem value="Low">Low</SelectItem>
-                                            <SelectItem value="Medium">Medium</SelectItem>
-                                            <SelectItem value="High">High</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                            <Select
+                                value={filters.status}
+                                onValueChange={(value) => {
+                                    setFilters({ ...filters, status: value })
+                                }}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                                <SelectContent className='max-h-96' >
+                                    <SelectItem value={null}>None</SelectItem>
+                                    <SelectItem value="Pending">Pending</SelectItem>
+                                    <SelectItem value="In Progress">In Progress</SelectItem>
+                                    <SelectItem value="Completed">Completed</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
 
-                                <div className="w-full sm:w-72">
-                                    <p className='text-md text-primary mb-1'>Filter by status</p>
+                    <div className='flex justify-end mt-2 mb-5'>
+                        <p
+                            className='cursor-pointer underline text-tertiary'
+                            onClick={() => {
+                                setDate(null)
+                                setFilters({
+                                    dueDate: null,
+                                    priority: null,
+                                    status: null,
+                                })
+                            }}
+                        >
+                            Clear filter
+                        </p>
+                    </div>
 
-                                    <Select
-                                        value={filters.status}
-                                        onValueChange={(value) => {
-                                            setFilters({ ...filters, status: value })
-                                        }}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select status" />
-                                        </SelectTrigger>
-                                        <SelectContent className='max-h-96' >
-                                            <SelectItem value={null}>None</SelectItem>
-                                            <SelectItem value="Pending">Pending</SelectItem>
-                                            <SelectItem value="In Progress">In Progress</SelectItem>
-                                            <SelectItem value="Completed">Completed</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
+                    {/* Tasks list Table */}
+                    <TaskTable
+                        columns={columns}
+                        data={data}
+                        loading={loading}
+                        setOpenAlert={setOpenAlert}
+                        setSelectedData={setSelectedData}
+                    />
 
-                            <div className='flex justify-end mt-2 mb-5'>
-                                <p
-                                    className='cursor-pointer underline text-tertiary'
-                                    onClick={() => {
-                                        setDate(null)
-                                        setFilters({
-                                            dueDate: null,
-                                            priority: null,
-                                            status: null,
-                                        })
-                                    }}
+                    {/* Alert for Delete */}
+                    <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This will delete the task
+                                    and remove from the list.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <Button
+                                    onClick={() => handleDelete()}
+                                    loading={deleteLoading}
+                                    disabled={deleteLoading}
                                 >
-                                    Clear filter
-                                </p>
-                            </div>
-
-                            {/* Tasks list Table */}
-                            <TaskTable
-                                columns={columns}
-                                data={data}
-                                loading={loading}
-                                setOpenAlert={setOpenAlert}
-                                setSelectedData={setSelectedData}
-                            />
-
-                            {/* Alert for Delete */}
-                            <AlertDialog open={openAlert} onOpenChange={setOpenAlert}>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This will delete the task
-                                            and remove from the list.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <Button
-                                            onClick={() => handleDelete()}
-                                            loading={deleteLoading}
-                                            disabled={deleteLoading}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </CardContent>
-                    </>
-                }
+                                    Delete
+                                </Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </CardContent>
             </Container>
         </Layout >
     );

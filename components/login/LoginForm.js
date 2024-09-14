@@ -73,6 +73,16 @@ const LoginForm = () => {
             }
         } catch (error) {
             console.log("error ==>", error);
+
+            if (error?.response?.data == "Not found") {
+                toast({
+                    variant: "error",
+                    title: "Invalid login credentials",
+                })
+                setIsLoading(false);
+                return
+            }
+
             toast({
                 variant: "error",
                 title: "Login failed",
