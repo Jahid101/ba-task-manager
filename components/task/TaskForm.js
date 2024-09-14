@@ -79,6 +79,7 @@ const TaskForm = ({
 
         if (isEdit) {
             delete payload?.id;
+            delete payload?.createdBy;
             payload.updatedBy = {
                 name: userDetails?.name,
                 date: new Date(),
