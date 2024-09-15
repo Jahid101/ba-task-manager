@@ -12,7 +12,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { useToast } from '@/components/ui/use-toast';
 import { setUserDetails } from '@/redux/user/usersSlice';
 import { usersAPIs } from '@/utility/api/usersApi';
-import { handleErrorMessage } from '@/utility/utilityFunctions';
+import { changeThemeColor, handleErrorMessage } from '@/utility/utilityFunctions';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';

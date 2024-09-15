@@ -1,9 +1,18 @@
-import GoogleLogin from "@/components/auth/GoogleLogin";
 import CustomLoader from "@/components/loader/loader";
-import LoginForm from "@/components/login/LoginForm";
+import { Spinner } from "@/components/ui/spinner";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+
+const GoogleLogin = dynamic(() => import('@/components/auth/GoogleLogin'), {
+  loading: () => <Spinner size="sm" className='mt-1' />,
+  ssr: false,
+});
+const LoginForm = dynamic(() => import('@/components/login/LoginForm'), {
+  loading: () => <Spinner size="sm" className='mt-1' />,
+  ssr: false,
+});
 
 
 export default function Home() {
@@ -51,7 +60,7 @@ export default function Home() {
           />
 
           <p
-            className="text-sm underline cursor-pointer text-center mt-3 text-label font-header"
+            className="text-sm underline cursor-pointer text-primary text-center mt-3 text-label font-header"
             onClick={() => router.push('/registration')}
           >Create account</p>
 

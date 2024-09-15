@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { FaGoogle } from 'react-icons/fa';
 import { usersAPIs } from '@/utility/api/usersApi';
 
-
 const GoogleLogin = ({ className }) => {
     const router = useRouter();
     const dispatch = useDispatch();
@@ -27,6 +26,7 @@ const GoogleLogin = ({ className }) => {
                     { headers: { Authorization: `Bearer ${access_token}` } }
                 );
                 // console.log('userInfo ===>', userInfo?.data);
+                setLoading(true)
                 saveUserinfo(userInfo?.data)
 
             } catch (error) {
@@ -95,7 +95,7 @@ const GoogleLogin = ({ className }) => {
         try {
             const response = await usersAPIs.createUser(userCredentials)
             if (response) {
-                const user = {...response};
+                const user = { ...response };
                 delete user.password;
 
                 // console.log('response ==>', response);
@@ -134,7 +134,6 @@ const GoogleLogin = ({ className }) => {
                 className="w-full"
                 size="lg"
                 onClick={() => {
-                    setLoading(true)
                     googleLogin()
                 }}
                 disabled={loading}

@@ -2,7 +2,6 @@ import CardContent from '@/components/customUI/CardContent';
 import Container from '@/components/customUI/Container';
 import PageTitle from '@/components/customUI/PageTitle';
 import Layout from '@/components/layout/Layout';
-import SettingsForm from '@/components/setting/SettingsForm';
 import {
     AlertDialog,
     AlertDialogCancel,
@@ -13,14 +12,20 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/components/ui/use-toast';
 import { setUserDetails } from '@/redux/user/usersSlice';
 import { usersAPIs } from '@/utility/api/usersApi';
 import { changeThemeColor } from '@/utility/utilityFunctions';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+const SettingsForm = dynamic(() => import('@/components/setting/SettingsForm'), {
+    loading: () => <Spinner size="sm" className='mt-1' />,
+    ssr: false,
+});
 
 const SettingPage = () => {
     const router = useRouter();

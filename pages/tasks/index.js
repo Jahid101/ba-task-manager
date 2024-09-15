@@ -2,7 +2,6 @@ import CardContent from '@/components/customUI/CardContent';
 import Container from '@/components/customUI/Container';
 import PageTitle from '@/components/customUI/PageTitle';
 import Layout from '@/components/layout/Layout';
-import TaskTable from '@/components/task/TaskTable';
 import {
     AlertDialog,
     AlertDialogCancel,
@@ -26,15 +25,21 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { tasksAPIs } from '@/utility/api/taskApi';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+const TaskTable = dynamic(() => import('@/components/task/TaskTable'), {
+    loading: () => <Spinner size="sm" className='mt-1' />,
+    ssr: false,
+});
 
 const TaskListPage = () => {
     const router = useRouter();

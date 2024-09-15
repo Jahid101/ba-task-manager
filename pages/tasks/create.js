@@ -1,8 +1,18 @@
 import CardContent from '@/components/customUI/CardContent';
 import Container from '@/components/customUI/Container';
 import Layout from '@/components/layout/Layout';
-import TaskForm from '@/components/task/TaskForm';
-import Breadcrumb from '@/components/ui/breadcrumb';
+import { Spinner } from '@/components/ui/spinner';
+import dynamic from 'next/dynamic';
+
+const Breadcrumb = dynamic(() => import('@/components/ui/breadcrumb'), {
+    loading: () => <Spinner size="sm" className='mt-1' />,
+    ssr: false,
+});
+const TaskForm = dynamic(() => import('@/components/task/TaskForm'), {
+    loading: () => <Spinner size="sm" className='mt-1' />,
+    ssr: false,
+});
+
 
 const TasksCreatePage = () => {
 
