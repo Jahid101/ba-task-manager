@@ -26,7 +26,7 @@ export default function RegistrationPage() {
           <RegistrationForm />
 
           <p
-            className="text-sm underline cursor-pointer text-center my-3 text-label font-header"
+            className="text-sm underline cursor-pointer text-center mt-3 text-label font-header"
             onClick={() => router.push('/')}
           >Login</p>
 

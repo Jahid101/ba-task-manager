@@ -99,7 +99,7 @@ const LoginForm = () => {
         <Form {...form}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="space-y-3"
+                className="space-y-4"
             >
                 <FormField
                     control={control}
