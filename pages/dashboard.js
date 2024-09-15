@@ -1,8 +1,6 @@
 import CardContent from "@/components/customUI/CardContent";
 import Container from "@/components/customUI/Container";
 import PageTitle from "@/components/customUI/PageTitle";
-import ListOfTasks from "@/components/dashboard/ListOfTasks";
-import MiniCard from "@/components/dashboard/MiniCard";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -12,19 +10,27 @@ import { cn } from "@/lib/utils";
 import { tasksAPIs } from "@/utility/api/taskApi";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { GrInProgress } from "react-icons/gr";
 import { IoIosCheckboxOutline } from "react-icons/io";
 import { MdOutlinePendingActions } from "react-icons/md";
-import { useDispatch } from "react-redux";
+
+const ListOfTasks = dynamic(() => import('@/components/dashboard/ListOfTasks'), {
+    loading: () => <Spinner size="sm" className='mt-1' />,
+    ssr: false,
+});
+
+const MiniCard = dynamic(() => import('@/components/dashboard/MiniCard'), {
+    loading: () => <Spinner size="sm" className='mt-1' />,
+    ssr: false,
+});
 
 
 const Dashboard = () => {
     const router = useRouter();
-    const dispatch = useDispatch();
     const [loading, setLoading] = useState(false);
-    const [pageLoad, setPageLoad] = useState(false);
     const [date, setDate] = useState(new Date());
     const [openDatePicker, setOpenDatePicker] = useState(false);
     const [cardDataInfo, setCardDataInfo] = useState(null);

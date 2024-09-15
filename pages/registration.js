@@ -1,6 +1,12 @@
-import RegistrationForm from "@/components/registration/RegistrationForm";
+import { Spinner } from "@/components/ui/spinner";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState } from "react";
+
+const RegistrationForm = dynamic(() => import('@/components/registration/RegistrationForm'), {
+  loading: () => <Spinner size="sm" className='mt-1' />,
+  ssr: false,
+});
 
 export default function RegistrationPage() {
   const router = useRouter();
@@ -26,7 +32,7 @@ export default function RegistrationPage() {
           <RegistrationForm />
 
           <p
-            className="text-sm underline cursor-pointer text-center mt-3 text-label font-header"
+            className="text-sm underline cursor-pointer text-primary text-center mt-3 text-label font-header"
             onClick={() => router.push('/')}
           >Login</p>
 

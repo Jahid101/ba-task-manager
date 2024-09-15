@@ -93,6 +93,7 @@ const TaskForm = ({
                         variant: "success",
                         title: "Task updated successfully.",
                     })
+                    router.push('/tasks')
                 } else {
                     toast({
                         variant: "error",

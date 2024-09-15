@@ -1,8 +1,13 @@
 import CardContent from "@/components/customUI/CardContent";
 import PageTitle from "@/components/customUI/PageTitle";
-import TaskTable from "@/components/task/TaskTable";
 import Link from "next/link";
+import { Spinner } from "@/components/ui/spinner";
+import dynamic from "next/dynamic";
 
+const TaskTable = dynamic(() => import('@/components/task/TaskTable'), {
+  loading: () => <Spinner size="sm" className='mt-1' />,
+  ssr: false,
+});
 
 const ListOfTasks = ({ date, data }) => {
 

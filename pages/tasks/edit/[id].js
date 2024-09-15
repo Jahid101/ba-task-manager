@@ -2,12 +2,22 @@ import CardContent from '@/components/customUI/CardContent';
 import Container from '@/components/customUI/Container';
 import Layout from '@/components/layout/Layout';
 import CustomLoader from '@/components/loader/loader';
-import TaskForm from '@/components/task/TaskForm';
-import Breadcrumb from '@/components/ui/breadcrumb';
+import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/components/ui/use-toast';
 import { tasksAPIs } from '@/utility/api/taskApi';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+
+const Breadcrumb = dynamic(() => import('@/components/ui/breadcrumb'), {
+    loading: () => <Spinner size="sm" className='mt-1' />,
+    ssr: false,
+});
+const TaskForm = dynamic(() => import('@/components/task/TaskForm'), {
+    loading: () => <Spinner size="sm" className='mt-1' />,
+    ssr: false,
+});
+
 
 const TasksEditPage = () => {
     const router = useRouter();
@@ -29,7 +39,7 @@ const TasksEditPage = () => {
             const response = await tasksAPIs.getTaskById(id)
             if (response) {
                 // console.log('response', response);
-                let taskInfo = {...response}
+                let taskInfo = { ...response }
                 delete taskInfo.createdAt
 
                 setData(taskInfo);
