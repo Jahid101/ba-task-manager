@@ -15,7 +15,7 @@ export const usersAPIs = {
     },
     loginUser: async (userInfo) => {
         const data = await axios({
-            url: Constants.Api.users.users + `?email=${userInfo?.email}&password=${userInfo?.password}`,
+            url: Constants.Api.users.users + `?email=${userInfo?.email}`,
             method: "GET",
             data: userInfo
         })

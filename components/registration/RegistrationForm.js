@@ -46,12 +46,13 @@ const RegistrationForm = () => {
         let userCredentials = {
             name: data.name?.trim(),
             email: data.email?.trim(),
+            loginType: 'email',
             password: data.password,
             preferences: {
                 showPriorityFilter: true,
                 showStatusFilter: true,
                 showDateFilter: true,
-                themeColor: '#64748b',
+                themeColor: '#04818c',
             },
         };
 

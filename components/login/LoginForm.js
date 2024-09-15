@@ -58,6 +58,15 @@ const LoginForm = () => {
                 // console.log('response ==>', response[0]);
 
                 if (user?.id) {
+                    if (user?.loginType != 'email') {
+                        toast({
+                            variant: "error",
+                            title: "User already registered with different login type",
+                        })
+                        setIsLoading(false);
+                        return;
+                    }
+
                     changeThemeColor(user?.preferences?.themeColor);
                     dispatch(setUserDetails(user));
                     toast({
@@ -79,7 +88,7 @@ const LoginForm = () => {
             if (error?.response?.data == "Not found") {
                 toast({
                     variant: "error",
-                    title: "Invalid login credentials",
+                    title: "User not found",
                 })
                 setIsLoading(false);
                 return

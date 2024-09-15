@@ -1,10 +1,9 @@
+import GoogleLogin from "@/components/auth/GoogleLogin";
 import CustomLoader from "@/components/loader/loader";
 import LoginForm from "@/components/login/LoginForm";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { signIn } from "next-auth/react";
 
 
 export default function Home() {
@@ -46,16 +45,10 @@ export default function Home() {
           {/* Login form */}
           <LoginForm />
 
-          <Button
-            className="mt-3 w-full"
-            size="lg"
-            onClick={() => signIn("google")}
-            // type="submit"
-            // disabled={loading}
-            // loading={loading}
-          >
-            Login with google
-          </Button>
+          {/* Google Login */}
+          <GoogleLogin
+            className="mt-4"
+          />
 
           <p
             className="text-sm underline cursor-pointer text-center mt-3 text-label font-header"
