@@ -134,7 +134,7 @@ const GoogleLogin = ({ className }) => {
                 className="w-full"
                 size="lg"
                 onClick={() => {
-                    setLoading(true)
+                    // setLoading(true)
                     googleLogin()
                 }}
                 disabled={loading}
