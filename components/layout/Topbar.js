@@ -18,9 +18,9 @@ import { changeThemeColor } from "@/utility/utilityFunctions";
 
 
 const TopBar = () => {
+    const { userDetails } = useSelector((state) => state.usersSlice);
     const router = useRouter();
     const dispatch = useDispatch();
-    const { userDetails } = useSelector((state) => state.usersSlice);
 
     const handleLogout = () => {
         dispatch(setUserDetails(null));
@@ -48,7 +48,7 @@ const TopBar = () => {
                 <DropdownMenu>
                     <DropdownMenuTrigger>
                         <Avatar className="cursor-pointer border border-solid border-slate-300">
-                            <AvatarImage src={null} />
+                            <AvatarImage src={userDetails?.picture} />
                             <AvatarFallback className="uppercase">{userDetails?.name ? userDetails?.name[0] : 'A'}</AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>
@@ -56,7 +56,7 @@ const TopBar = () => {
                     <DropdownMenuContent className='mr-5'>
                         <div className="flex items-center py-1">
                             <Avatar className="cursor-pointer border border-solid border-slate-300">
-                                <AvatarImage src={null} />
+                                <AvatarImage src={userDetails?.picture} />
                                 <AvatarFallback className='uppercase'>{userDetails?.name ? userDetails?.name[0] : 'A'}</AvatarFallback>
                             </Avatar>
                             <div>
