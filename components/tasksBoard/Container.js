@@ -58,7 +58,7 @@ export default function Container(props) {
                   <span>In Progress</span>
                 </div>
                 :
-                id == 'complete' ?
+                id == 'completed' ?
                   <div div className="flex items-center gap-4 px-1">
                     <IoIosCheckboxOutline className="w-6 h-6" />
                     <span>Completed</span>

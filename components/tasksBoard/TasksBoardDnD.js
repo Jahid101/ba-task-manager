@@ -1,7 +1,17 @@
 import { useToast } from "@/components/ui/use-toast";
-import { arrayMove } from "@dnd-kit/sortable";
+import { tasksAPIs } from "@/utility/api/taskApi";
+import {
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  closestCorners,
+  useSensor,
+  useSensors
+} from "@dnd-kit/core";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Spinner } from "../ui/spinner";
 import Container from "./Container";
 import { Item } from "./sortable_item";
@@ -15,45 +25,76 @@ const wrapperStyle = {
 
 export default function TasksBoardDnD({ data, loading, setLoading }) {
   const { userDetails } = useSelector((state) => state.usersSlice);
-  const [openAlert, setOpenAlert] = useState(false);
-  const [showAppointModal, setShowAppointModal] = useState(false);
-  const dispatch = useDispatch();
   const { toast } = useToast();
   const [rng, setRng] = useState(null)
   const [prevContainer, setPrevContainer] = useState('')
-  const [event, setEvent] = useState(null);
-  const [prevItems, setPrevItems] = useState(null);
-  const [prevItemsPerDnd, setPrevItemsPerDnd] = useState(null);
+  const [updatedStatus, setUpdatedStatus] = useState(null)
   const [items, setItems] = useState({
     pending: [],
     inProgress: [],
-    complete: [],
+    completed: [],
   });
   const [activeId, setActiveId] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
-  const [droppedItem, setDroppedItem] = useState(null);
-  const [droppedContainer, setDroppedContainer] = useState(null);
-  const [tokenRequired, setTokenRequired] = useState(false);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  );
 
 
   useEffect(() => {
     if (rng) {
       handleUpdateStatusBoard()
     }
-  }, []);
+  }, [rng]);
 
   useEffect(() => {
     setItems({
       pending: data?.pending || [],
       inProgress: data?.inProgress || [],
-      complete: data?.complete || [],
+      completed: data?.completed || [],
     });
-  }, []);
+  }, [data]);
 
 
 
-  const handleUpdateStatusBoard = () => {
+  const handleUpdateStatusBoard = async () => {
+    const payload = {
+      ...activeItem,
+      status: updatedStatus
+    }
 
+    delete payload?.id;
+    delete payload?.createdAt;
+    delete payload?.createdBy;
+
+    payload.updatedBy = {
+      name: userDetails?.name,
+      date: new Date(),
+    }
+
+    try {
+      const response = await tasksAPIs.updateTask(payload, activeItem?.id)
+
+      if (response) {
+      } else {
+        location.reload();
+        toast({
+          variant: "error",
+          title: "Task update failed",
+        })
+      }
+    } catch (error) {
+      console.log("error ==>", error);
+      location.reload();
+      toast({
+        variant: "error",
+        title: "Task update failed",
+      })
+    }
   };
 
 
@@ -74,18 +115,13 @@ export default function TasksBoardDnD({ data, loading, setLoading }) {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <Container id="pending" items={items.pending} />
-        <Container id="inProgress" items={items.inProgress} />
-        <Container id="complete" items={items.complete} />
+        <Container id="pending" items={items?.pending} />
+        <Container id="inProgress" items={items?.inProgress} />
+        <Container id="completed" items={items?.completed} />
         <DragOverlay>
           {
             activeId ?
-              <div className="relative">
-                <Item id={activeId} item={activeItem} />
-                <div className="absolute top-2 right-3">
-                  <HiOutlineDotsHorizontal className='text-primary font-bold ml-3' />
-                </div>
-              </div>
+              <Item id={activeId} item={activeItem} />
               :
               null
           }
@@ -94,6 +130,7 @@ export default function TasksBoardDnD({ data, loading, setLoading }) {
     </div>
   );
 
+  
   function findContainer(id) {
     if (id in items) {
       return id;
@@ -113,10 +150,7 @@ export default function TasksBoardDnD({ data, loading, setLoading }) {
     setActiveId(id);
     setPrevContainer(active.data.current.sortable.containerId)
     const activeItem = items[active.data.current.sortable.containerId].find(item => item.id == id)
-    setPrevItemsPerDnd(items)
     setActiveItem(activeItem)
-    setDroppedItem(null)
-    setDroppedContainer(null)
   };
 
   function handleDragOver(event, hasToken = null) {
@@ -126,10 +160,6 @@ export default function TasksBoardDnD({ data, loading, setLoading }) {
 
     const activeContainer = findContainer(id);
     const overContainer = findContainer(overId);
-
-    if (overContainer == 'done' && !hasToken) {
-      return;
-    }
 
     if (!activeContainer || !overContainer || activeContainer === overContainer) {
       return;
@@ -181,49 +211,33 @@ export default function TasksBoardDnD({ data, loading, setLoading }) {
     const activeContainer = findContainer(id);
     const overContainer = findContainer(overId);
 
-    // Old code ==>
-    // if (overContainer === 'done' && activeContainer !== overContainer) {
-    //   setOpenAlert(true);
-    //   setEvent(event);
-    //   return;
-    // }
-    // if (!activeContainer || !overContainer || activeContainer !== overContainer) {
-    //   return;
-    // }
-
 
     if ((overContainer != prevContainer) || (id != overId)) {
-      // if (overContainer != prevContainer) {
       setPrevContainer(overContainer)
-      // setRng(Math.random())
 
       if (overContainer != prevContainer) {
-        // For on hold status ==>
-        if (prevContainer == 'onHold' && activeItem?.type == 'to_be_determined' && !activeItem?.practitioner_id && (overContainer != prevContainer)) {
-          setShowAppointModal(true)
-          setDroppedItem(activeItem)
-          setDroppedContainer(overContainer)
-          if (overContainer == 'done') {
-            setTokenRequired(true)
-          }
-          return;
-        } else {
-          // setRng(Math.random())
+        setRng(Math.random())
 
-          // For done status ==>
-          if (overContainer == 'done') {
-            setOpenAlert(true);
-            setEvent(event);
-            return;
-          } else {
-            setRng(Math.random())
-            return;
-          }
+        // console.log('Task moved between columns', {
+        //   fromContainer: activeContainer,
+        //   toContainer: overContainer,
+        // });
+        if (overContainer == 'pending') {
+          setUpdatedStatus('Pending')
         }
+        if (overContainer == 'inProgress') {
+          setUpdatedStatus('In Progress')
+        }
+        if (overContainer == 'completed') {
+          setUpdatedStatus('Completed')
+        }
+        return;
       }
       else {
         if (id != overId) {
-          setRng(Math.random())
+          // setRng(Math.random())
+          // Vertically dnd stops
+          return;
         }
       }
     }

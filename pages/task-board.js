@@ -1,14 +1,16 @@
 import CardContent from '@/components/customUI/CardContent';
+import Container from '@/components/customUI/Container';
 import PageTitle from '@/components/customUI/PageTitle';
 import Layout from '@/components/layout/Layout';
-import Container from '@/components/tasksBoard/Container';
+import { Spinner } from '@/components/ui/spinner';
 import { tasksAPIs } from '@/utility/api/taskApi';
+import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 
-// const TasksBoardDnD = dynamic(() => import('@/components/tasksBoard/TasksBoardDnD'), {
-//     loading: () => <Spinner size="sm" className='mt-1' />,
-//     ssr: false,
-// });
+const TasksBoardDnD = dynamic(() => import('@/components/tasksBoard/TasksBoardDnD'), {
+    loading: () => <Spinner size="md" className='mt-1' />,
+    ssr: false,
+});
 
 
 const TasksBoardPage = () => {
@@ -41,6 +43,7 @@ const TasksBoardPage = () => {
                     inProgress: inProgressTasks,
                     completed: completedTasks,
                 }
+
                 setData(tasksForDnd)
                 setLoading(false);
             }
@@ -64,16 +67,14 @@ const TasksBoardPage = () => {
     return (
         <Layout>
             <Container>
-                <PageTitle title="Dashboard" className="font-normal" />
+                <PageTitle title="Tasks board" className="font-normal" />
 
                 <CardContent className="bg-white mb-7 shadow-lg">
-                    hi
-                    {/* <SortableGrid /> */}
-                    {/* <TasksBoardDnD
+                    <TasksBoardDnD
                         data={data}
                         loading={loading}
                         setLoading={setLoading}
-                    /> */}
+                    />
                 </CardContent>
             </Container>
         </Layout>
