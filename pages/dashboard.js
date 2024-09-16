@@ -78,13 +78,13 @@ const Dashboard = () => {
 
                 let copyOfCardData = [...cardData];
 
-                let pendingCount = response.filter(item => item.status == "Pending")
-                let inProgressCount = response.filter(item => item.status == "In Progress")
-                let completedCount = response.filter(item => item.status == "Completed")
+                let pendingTasks = response.filter(item => item.status == "Pending")
+                let inProgressTasks = response.filter(item => item.status == "In Progress")
+                let completedTasks = response.filter(item => item.status == "Completed")
 
-                copyOfCardData[0].amount = pendingCount?.length || 0;
-                copyOfCardData[1].amount = inProgressCount?.length || 0;
-                copyOfCardData[2].amount = completedCount?.length || 0;
+                copyOfCardData[0].amount = pendingTasks?.length || 0;
+                copyOfCardData[1].amount = inProgressTasks?.length || 0;
+                copyOfCardData[2].amount = completedTasks?.length || 0;
 
                 let taskList = [...response];
                 taskList?.reverse()

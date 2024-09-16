@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from '@/components/ui/button';
 import { useWindowWidth } from "@react-hook/window-size";
+import { BiColumns } from "react-icons/bi";
 import { FaAngleLeft, FaRegClipboard } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
 import { LuLayoutDashboard } from "react-icons/lu";
@@ -40,6 +41,12 @@ export default function SideNavbar() {
       title: "Tasks",
       href: "/tasks",
       icon: FaRegClipboard,
+      variant: "ghost"
+    },
+    {
+      title: "Tasks Board",
+      href: "/task-board",
+      icon: BiColumns,
       variant: "ghost"
     },
   ]
